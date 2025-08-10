@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Menu Chức Năng - @Minhtri</title>
+<style>
+:root{
+  --bg:#0d0d0d;
+  --panel-bg: rgba(30,30,30,0.95);
+  --btn-dark:#222;
+  --btn-hover:#333;
+  --on-gradient: linear-gradient(90deg,#00cc44,#00ff88);
+  --off-gradient: linear-gradient(90deg,#cc0000,#ff4444);
+  --cross-color: #ff0000;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#fff;overflow:hidden}
+
+/* snow */
+.snowflake{position:fixed;top:-10px;color:white;user-select:none;pointer-events:none;animation:fall linear infinite}
+@keyframes fall{0%{transform:translateY(-10px)}100%{transform:translateY(100vh)}}
+
+/* panel */
+.panel{width:340px;margin:60px auto;padding:20px;border-radius:12px;background:var(--panel-bg);position:relative;z-index:10005}
+.panel::before{content:"";position:absolute;top:-3px;left:-3px;right:-3px;bottom:-3px;background:linear-gradient(270deg,red,orange,yellow,lime,cyan,blue,violet,red);background-size:800% 800%;border-radius:16px;z-index:-1;filter:blur(4px);animation:rainbowBorder 5s linear infinite}
+@keyframes rainbowBorder{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+.panel h2{margin:0 0 14px 0;font-size:20px;text-align:center;background:linear-gradient(90deg,#00ff88,#00ccff,#ff00ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:300% 300%;animation:textFlow 3s linear infinite;text-shadow:0 0 10px rgba(0,255,255,0.12)}
+@keyframes textFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* buttons */
+.feature-btn{display:block;width:100%;padding:10px;margin:8px 0;border-radius:6px;background:var(--btn-dark);border:none;color:#fff;font-size:15px;cursor:pointer;transition:transform .18s ease,background .18s ease}
+.feature-btn:hover{transform:scale(1.02);background:var(--btn-hover)}
+.feature-btn.on{background:var(--on-gradient)}
+.feature-btn.off{background:var(--off-gradient)}
+
+/* AIM header clickable */
+.aim-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:8px 6px;border-radius:6px;background:rgba(255,255,255,0.02);margin-top:8px}
+.aim-title{font-size:15px;font-weight:600;color:#e6e6e6}
+.aim-arrow{width:18px;height:18px;transition:transform .3s ease}
+
+/* collapsible content */
+.aim-content{overflow:hidden;max-height:0;opacity:0;transition:max-height .4s cubic-bezier(.2,.9,.2,1),opacity .25s ease;padding:0 6px}
+.aim-content.open{opacity:1;max-height:420px;margin-top:10px}
+.aim-row{margin:8px 0}
+.group-title{font-size:13px;color:#bbb;text-align:center;margin-bottom:6px}
+
+/* color input & sliders */
+.color-row{display:flex;align-items:center;gap:10px}
+.color-row label{font-size:13px;color:#ddd}
+input[type="color"]{width:42px;height:32px;border:none;padding:0;background:transparent;cursor:pointer}
+input[type="range"]{width:100%}
+
+/* wind/AC */
+.wind{position:absolute;right:10px;bottom:10px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.wind .temp{font-size:13px;color:#ddd}
+.ac-icon{width:28px;height:28px;display:inline-block;vertical-align:middle;stroke:#fff;fill:none;}
+
+/* stats */
+.fps,.ping{position:fixed;font-weight:700;font-size:14px;background:rgba(0,0,0,0.45);padding:6px 10px;border-radius:6px}
+.fps{left:10px;top:10px}.ping{right:10px;top:10px}
+
+/* crosshair elements */
+.crosshair,.subcross,.fixedcross,.fov-circle{
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:9999;}
+
+/* nhẹ tâm: lớn hơn, rung nhẹ */
+.crosshair{width:28px;height:28px;border:2px solid var(--cross-color);border-radius:50%;animation:crossWobble .18s infinite alternate;box-shadow:0 0 8px rgba(255,0,0,0.12)}
+@keyframes crossWobble{from{transform:translate(-50%,-50%) translateX(-1px)}to{transform:translate(-50%,-50%) translateX(1px)}}
+
+/* ngoáy cháo: nhỏ, spin */
+.subcross{width:10px;height:10px;border:2px solid var(--cross-color);border-radius:50%;animation:spin 0.6s linear infinite;box-shadow:0 0 6px rgba(255,0,0,0.14)}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* tâm cố định */
+.fixedcross{width:14px;height:14px;border:2px solid var(--cross-color);border-radius:50%;box-shadow:0 0 6px rgba(255,0,0,0.18)}
+
+/* FOV circle (will be centered on screen) */
+/* ADDED: rainbow FOV styling */
+.fov-circle{
+  width:0;height:0;border-radius:50%;border:2px dashed rgba(255,255,255,0.18);transform:translate(-50%,-50%);background:radial-gradient(circle at center, rgba(255,255,255,0.04), rgba(255,255,255,0));opacity:0;transition:opacity .25s ease,width .15s ease,height .15s ease;display:flex;align-items:center;justify-content:center;}
+.fov-circle.show{opacity:1}
+
+/* ADDED: rainbow animation using conic-gradient */
+.fov-circle.rainbow{
+  border: 3px solid transparent;
+  background:
+    conic-gradient(from 0deg, red, orange, yellow, lime, cyan, blue, violet, red);
+  -webkit-mask:
+    radial-gradient(farthest-side, transparent calc(100% - 8px), black calc(100% - 6px));
+  mask:
+    radial-gradient(farthest-side, transparent calc(100% - 8px), black calc(100% - 6px));
+  animation: rotateRainbow 3s linear infinite;
+}
+@keyframes rotateRainbow{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+
+/* helpers */
+.row-flex{display:flex;gap:8px}
+.small-btn{padding:8px 10px;font-size:13px;border-radius:6px;border:none;cursor:pointer}
+.muted{color:#bbb;font-size:13px}
+
+/* floating menu button (mobile friendly) ADDED */
+.floating-menu-btn{
+  position:fixed;left:12px;bottom:12px;z-index:10010;padding:10px 12px;border-radius:10px;background:rgba(0,0,0,0.6);color:#fff;border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);font-weight:700}
+.floating-menu-btn:active{transform:scale(0.98)}
+
+/* responsive */
+@media (max-width:420px){.panel{width:92%;margin:30px auto}}
+/* ADDED: fixed overlay class for recoil active (removes animations) */
+.cross-fixed{animation:none !important; transform:translate(-50%,-50%) !important}
+</style>
+</head>
+<body>
+
+<div class="panel" id="panel">
+  <h2>Menu @Minhtri</h2>
+
+  <!-- always visible outside AIM -->
+  <button class="feature-btn off" id="lightAimBtn">NHẸ TÂM (1)</button>
+  <button class="feature-btn off" id="spinAimBtn">AIMLOCK NGOÁY CHÁO (2)</button>
+  <button class="feature-btn off" id="fixedAimBtn">TÂM CỐ ĐỊNH (3)</button>
+  <!-- ADDED: Fix Recoil button -->
+  <button class="feature-btn off" id="fixRecoilBtn">FIX RECOIL (4)</button>
+
+  <!-- AIM header (click to open/close) -->
+  <div class="aim-header" id="aimHeader" title="Bấm để mở/đóng AIM (A)">
+    <div class="aim-title">AIM</div>
+    <svg class="aim-arrow" id="aimArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+  </div>
+
+  <!-- AIM content (collapsed by default) -->
+  <div class="aim-content" id="aimContent" aria-hidden="true">
+    <div class="group-title">Cấu hình AIM (ẩn khi đóng)</div>
+
+    <div class="aim-row">
+      <label style="display:block;font-size:13px;color:#ddd;margin-bottom:6px">Aim FOV: <span id="fovVal">120</span> px</label>
+      <input type="range" id="fovRange" min="30" max="400" value="120">
+      <div style="margin-top:6px">
+        <button class="small-btn" id="toggleFovBtn">Bật/Tắt Aim FOV</button>
+        <button class="small-btn off" id="toggleFovRainbowBtn" title="7 màu">FOV 7 MÀU</button>
+        <span class="muted" style="margin-left:8px">Vòng chỉ hiện khi bật</span>
+      </div>
+    </div>
+
+    <div class="aim-row row-flex">
+      <button class="small-btn off" id="aimHeadBtn">Aim Head</button>
+      <button class="small-btn off" id="aim360Btn">Aim 360°</button>
+    </div>
+
+    <div class="aim-row">
+      <div style="font-size:13px;color:#ddd;margin-bottom:6px">Shortcut Tâm</div>
+      <div class="row-flex">
+        <button class="small-btn" id="scSmall">Nhỏ</button>
+        <button class="small-btn" id="scBig">To</button>
+        <button class="small-btn" id="scRed">Đỏ</button>
+        <button class="small-btn" id="scBlue">Xanh</button>
+      </div>
+      <div class="muted" style="margin-top:6px">Nhấn để đổi nhanh tâm</div>
+    </div>
+
+    <div class="aim-row color-row" style="margin-top:10px">
+      <label for="aimColor">Màu tâm:</label>
+      <input type="color" id="aimColor" value="#ff0000">
+      <div class="muted">Áp dụng ngay cho tâm đang bật</div>
+    </div>
+
+    <!-- ADDED: Auto-open menu option -->
+    <div class="aim-row" style="margin-top:8px">
+      <label style="font-size:13px;color:#ddd;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="autoOpenCheckbox"> Mở menu tự động khi vào game (iOS-friendly)
+      </label>
+      <div class="muted">Lưu trên thiết bị</div>
+    </div>
+
+  </div>
+
+  <!-- hidden fallback btn (kept for compatibility if needed) -->
+  <button class="feature-btn off" id="toggleAimGroupBtn" style="display:none">ẨN MỤC AIM</button>
+
+  <!-- AC / temperature -->
+  <div class="wind" id="windWidget" title="Bấm để bật/tắt điều hòa (làm mát)">
+    <!-- simple white stroke AC icon -->
+    <svg class="ac-icon" id="acIcon" viewBox="0 0 24 24" stroke-width="1.5">
+      <rect x="2" y="4" width="20" height="14" rx="2" ry="2" stroke="#fff" fill="none"></rect>
+      <path d="M7 8h10M7 12h10" stroke="#fff" stroke-linecap="round"></path>
+      <circle cx="12" cy="17" r="2" fill="none" stroke="#fff"></circle>
+    </svg>
+    <div style="display:flex;flex-direction:column;align-items:flex-end">
+      <div class="temp" id="temperature">Nhiệt độ: 50°C</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOV circle (centered overlay) -->
+<div id="fovCircle" class="fov-circle" aria-hidden="true"></div>
+
+<!-- Floating menu button (for iOS easy open) -->
+<button id="floatingMenuBtn" class="floating-menu-btn" title="Mở/Đóng Menu">MENU</button>
+
+<!-- crosshair placeholders will be appended dynamically -->
+
+<!-- stats -->
+<div id="fpsDisplay" class="fps" style="display:none">FPS: 60</div>
+<div id="pingDisplay" class="ping" style="display:none">Ping: 50ms</div>
+
+<script>
+/* ---------- trạng thái ---------- */
+let crossElem = null, subCrossElem = null, fixedCrossElem = null;
+let fovOn = false, fovRainbow = false, aimHeadOn = false, aim360On = false;
+let cooling = false, temp = 50;
+let fixRecoilOn = false;
+let fpsInterval, pingInterval, tempInterval;
+
+/* ---------- element refs ---------- */
+const aimHeader = document.getElementById('aimHeader');
+const aimContent = document.getElementById('aimContent');
+const aimArrow = document.getElementById('aimArrow');
+
+const lightAimBtn = document.getElementById('lightAimBtn');
+const spinAimBtn = document.getElementById('spinAimBtn');
+const fixedAimBtn = document.getElementById('fixedAimBtn');
+const fixRecoilBtn = document.getElementById('fixRecoilBtn'); // ADDED
+
+const toggleFovBtn = document.getElementById('toggleFovBtn');
+const toggleFovRainbowBtn = document.getElementById('toggleFovRainbowBtn'); // ADDED
+const fovRange = document.getElementById('fovRange');
+const fovVal = document.getElementById('fovVal');
+const fovCircle = document.getElementById('fovCircle');
+
+const aimHeadBtn = document.getElementById('aimHeadBtn');
+const aim360Btn = document.getElementById('aim360Btn');
+
+const aimColor = document.getElementById('aimColor');
+
+const scSmall = document.getElementById('scSmall');
+const scBig = document.getElementById('scBig');
+const scRed = document.getElementById('scRed');
+const scBlue = document.getElementById('scBlue');
+
+const floatingMenuBtn = document.getElementById('floatingMenuBtn');
+const autoOpenCheckbox = document.getElementById('autoOpenCheckbox');
+
+const cpuBtn = document.getElementById('lightAimBtn'); // reuse id for keyboard mapping (1)
+const netBtn = document.getElementById('spinAimBtn'); // (2)
+const fixedBtn = document.getElementById('fixedAimBtn'); // (3)
+
+const fpsDisplay = document.getElementById('fpsDisplay');
+const pingDisplay = document.getElementById('pingDisplay');
+
+const windWidget = document.getElementById('windWidget');
+const acIcon = document.getElementById('acIcon');
+const temperatureEl = document.getElementById('temperature');
+
+/* ---------- init ---------- */
+(function init(){
+  aimContent.classList.remove('open');
+  aimArrow.style.transform = 'rotate(0deg)';
+  fovVal.textContent = fovRange.value;
+  // set default classes
+  [lightAimBtn, spinAimBtn, fixedAimBtn, fixRecoilBtn].forEach(b=>b.classList.add('off'));
+  [aimHeadBtn, aim360Btn, toggleFovBtn, toggleFovRainbowBtn].forEach(b=>b.classList.add('off'));
+  aimColor.value = getComputedStyle(document.documentElement).getPropertyValue('--cross-color').trim() || '#ff0000';
+  updateTemperatureText();
+  // start snow
+  setInterval(createSnowflake, 220);
+
+  // load auto-open setting
+  const autoOpen = localStorage.getItem('panel_auto_open') === '1';
+  autoOpenCheckbox.checked = autoOpen;
+  if(autoOpen){
+    // slight delay so overlay is ready
+    setTimeout(()=>{ openMenu(); }, 350);
+  }
+
+  // floating menu for mobile
+  floatingMenuBtn.addEventListener('click', ()=>{ togglePanelVisibility(); });
+
+  // init touch shortcut: long-press floating button opens menu on iOS
+  let touchTimer = null;
+  floatingMenuBtn.addEventListener('touchstart', (e)=> {
+    touchTimer = setTimeout(()=> openMenu(), 600);
+  }, {passive:true});
+  floatingMenuBtn.addEventListener('touchend', ()=> { clearTimeout(touchTimer); });
+
+})();
+
+/* ---------- snow ---------- */
+function createSnowflake(){
+  const el = document.createElement('div');
+  el.className = 'snowflake';
+  el.textContent = '❄';
+  el.style.left = Math.random()*window.innerWidth + 'px';
+  el.style.fontSize = (Math.random()*10+10) + 'px';
+  el.style.animationDuration = (Math.random()*3+4) + 's';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 8000);
+}
+
+/* ---------- Panel open/close helpers (ADDED) ---------- */
+function openMenu(){
+  aimContent.classList.add('open');
+  aimContent.setAttribute('aria-hidden','false');
+  aimArrow.style.transform = 'rotate(180deg)';
+  document.getElementById('panel').style.display = 'block';
+}
+function closeMenu(){
+  aimContent.classList.remove('open');
+  aimContent.setAttribute('aria-hidden','true');
+  aimArrow.style.transform = 'rotate(0deg)';
+  // when closing AIM group -> turn off internal states
+  if(fovOn) toggleFOV();
+  if(aimHeadOn) toggleAimHead();
+  if(aim360On) toggleAim360();
+}
+function togglePanelVisibility(){
+  const p = document.getElementById('panel');
+  if(p.style.display === 'none' || getComputedStyle(p).display === 'none'){
+    p.style.display = 'block';
+  } else {
+    p.style.display = 'none';
+  }
+}
+
+/* save auto-open setting */
+autoOpenCheckbox.addEventListener('change', (e)=>{
+  localStorage.setItem('panel_auto_open', e.target.checked ? '1' : '0');
+});
+
+/* ---------- AIM collapse (original behavior kept) ---------- */
+aimHeader.addEventListener('click', ()=>{
+  const open = aimContent.classList.toggle('open');
+  aimContent.setAttribute('aria-hidden', !open);
+  aimArrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+  if(!open){
+    // khi đóng nhóm AIM -> tắt toàn bộ chức năng trong nhóm
+    if(fovOn) toggleFOV(); // will hide circle
+    if(aimHeadOn) toggleAimHead();
+    if(aim360On) toggleAim360();
+  }
+});
+document.addEventListener('keydown', (e)=>{ if(e.key.toLowerCase()==='a') aimHeader.click(); });
+
+/* ---------- Crosshair functions (outside AIM) ---------- */
+lightAimBtn.addEventListener('click', ()=>toggleLightAim());
+spinAimBtn.addEventListener('click', ()=>toggleSpinAim());
+fixedAimBtn.addEventListener('click', ()=>toggleFixedAim());
+fixRecoilBtn.addEventListener('click', ()=>toggleFixRecoil()); // ADDED
+
+function clearCrosses(){
+  if(crossElem){ crossElem.remove(); crossElem = null; }
+  if(subCrossElem){ subCrossElem.remove(); subCrossElem = null; }
+  if(fixedCrossElem){ fixedCrossElem.remove(); fixedCrossElem = null; }
+  [lightAimBtn, spinAimBtn, fixedAimBtn, fixRecoilBtn].forEach(b=>{ b.classList.remove('on'); b.classList.add('off'); });
+}
+
+function applyColor(color){
+  document.documentElement.style.setProperty('--cross-color', color);
+  if(crossElem) crossElem.style.borderColor = color;
+  if(subCrossElem) subCrossElem.style.borderColor = color;
+  if(fixedCrossElem) fixedCrossElem.style.borderColor = color;
+}
+
+/* NHẸ TÂM */
+function toggleLightAim(){
+  const btn = lightAimBtn;
+  const wasOn = btn.classList.contains('on');
+  clearCrosses();
+  if(!wasOn){
+    btn.classList.remove('off'); btn.classList.add('on');
+    crossElem = document.createElement('div'); crossElem.className = 'crosshair';
+    crossElem.style.borderColor = aimColor.value;
+    document.body.appendChild(crossElem);
+    // apply sensitivity effect if aimHead/360 on
+    adjustCrossEffects();
+    // if fix recoil enabled, make cross fixed
+    if(fixRecoilOn) makeCrossFixedVisual(crossElem);
+  }
+}
+
+/* AIMLOCK NGOÁY CHÁO */
+function toggleSpinAim(){
+  const btn = spinAimBtn;
+  const wasOn = btn.classList.contains('on');
+  clearCrosses();
+  if(!wasOn){
+    btn.classList.remove('off'); btn.classList.add('on');
+    subCrossElem = document.createElement('div'); subCrossElem.className = 'subcross';
+    subCrossElem.style.borderColor = aimColor.value;
+    document.body.appendChild(subCrossElem);
+    adjustCrossEffects();
+    if(fixRecoilOn) makeCrossFixedVisual(subCrossElem);
+  }
+}
+
+/* TÂM CỐ ĐỊNH */
+function toggleFixedAim(){
+  const btn = fixedAimBtn;
+  const wasOn = btn.classList.contains('on');
+  clearCrosses();
+  if(!wasOn){
+    btn.classList.remove('off'); btn.classList.add('on');
+    fixedCrossElem = document.createElement('div'); fixedCrossElem.className = 'fixedcross';
+    fixedCrossElem.style.borderColor = aimColor.value;
+    document.body.appendChild(fixedCrossElem);
+    adjustCrossEffects();
+    if(fixRecoilOn) makeCrossFixedVisual(fixedCrossElem);
+  }
+}
+
+/* ---------- Fix Recoil (ADDED) ---------- */
+/* Behavior:
+   - When enabled: remove wobble animation and rapidly bring the cross back to center on 'fire' events.
+   - 'Fire' events are simulated by pointerdown / touchstart on document (visual demo).
+   - Expose window.triggerRecoil(amount) so external scripts can simulate recoil and see correction.
+*/
+function toggleFixRecoil(){
+  fixRecoilOn = !fixRecoilOn;
+  fixRecoilBtn.classList.toggle('on'); fixRecoilBtn.classList.toggle('off');
+  if(fixRecoilOn){
+    // make currently active cross fixed visually
+    [crossElem, subCrossElem, fixedCrossElem].forEach(el=>{
+      if(el) makeCrossFixedVisual(el);
+    });
+    // listen for 'fire' events to visually show recoil then correction
+    document.addEventListener('pointerdown', recoilPointerHandler);
+    document.addEventListener('touchstart', recoilPointerHandler, {passive:true});
+    // expose simple API
+    window.triggerRecoil = function(amount = 12){
+      visualRecoil(amount);
+    };
+  } else {
+    // restore animations
+    [crossElem, subCrossElem, fixedCrossElem].forEach(el=>{
+      if(el) removeCrossFixedVisual(el);
+    });
+    document.removeEventListener('pointerdown', recoilPointerHandler);
+    document.removeEventListener('touchstart', recoilPointerHandler);
+    if(window.triggerRecoil) delete window.triggerRecoil;
+  }
+}
+
+// pointer handler wrapper
+function recoilPointerHandler(e){
+  // small amount for demo
+  visualRecoil(12);
+}
+
+// visual recoil: shift cross temporarily then, if fixRecoilOn, pull back quickly
+function visualRecoil(amount){
+  const targets = [crossElem, subCrossElem, fixedCrossElem].filter(Boolean);
+  if(targets.length === 0) return;
+  targets.forEach(el=>{
+    // randomize direction slightly for natural look
+    const dx = (Math.random() - 0.5) * amount * 0.4;
+    const dy = -Math.abs((Math.random()*amount) ); // recoil typically goes up
+    // apply transform offset relative to center
+    el.style.transition = 'transform 0.08s linear';
+    el.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+    // if fixRecoilOn -> quickly bring back (simulate anti-recoil)
+    if(fixRecoilOn){
+      setTimeout(()=> {
+        el.style.transition = 'transform 0.12s cubic-bezier(.2,.8,.2,1)';
+        el.style.transform = 'translate(-50%,-50%)'; // back to center
+      }, 30); // quick counter
+    } else {
+      // otherwise slowly drift back
+      setTimeout(()=> {
+        el.style.transition = 'transform 0.25s cubic-bezier(.2,.8,.2,1)';
+        el.style.transform = 'translate(-50%,-50%)';
+      }, 120);
+    }
+  });
+}
+
+function makeCrossFixedVisual(el){
+  if(!el) return;
+  el.classList.add('cross-fixed'); // remove CSS animations
+  // ensure transform is exactly centered
+  el.style.transform = 'translate(-50%,-50%)';
+  el.style.transition = 'transform 0.08s linear';
+}
+function removeCrossFixedVisual(el){
+  if(!el) return;
+  el.classList.remove('cross-fixed');
+  el.style.transition = '';
+}
+
+/* ---------- AIM internals ---------- */
+
+/* FOV: toggle & slider */
+toggleFovBtn.addEventListener('click', ()=>toggleFOV());
+toggleFovRainbowBtn.addEventListener('click', ()=>toggleFOVRainbow());
+fovRange.addEventListener('input', ()=> {
+  fovVal.textContent = fovRange.value;
+  if(fovOn) updateFovCircle();
+});
+
+function toggleFOV(){
+  fovOn = !fovOn;
+  toggleFovBtn.classList.toggle('on'); toggleFovBtn.classList.toggle('off');
+  if(fovOn){
+    // ensure AIM group open
+    if(!aimContent.classList.contains('open')) aimHeader.click();
+    showFovCircle();
+  } else {
+    hideFovCircle();
+  }
+}
+
+function toggleFOVRainbow(){
+  fovRainbow = !fovRainbow;
+  toggleFovRainbowBtn.classList.toggle('on'); toggleFovRainbowBtn.classList.toggle('off');
+  if(fovRainbow){
+    fovCircle.classList.add('rainbow');
+  } else {
+    fovCircle.classList.remove('rainbow');
+  }
+}
+
+function showFovCircle(){
+  updateFovCircle();
+  fovCircle.classList.add('show');
+  fovCircle.setAttribute('aria-hidden','false');
+}
+function hideFovCircle(){
+  fovCircle.classList.remove('show');
+  fovCircle.setAttribute('aria-hidden','true');
+}
+function updateFovCircle(){
+  const r = parseInt(fovRange.value,10) || 120;
+  // set width/height centered at screen center
+  fovCircle.style.width = r*2 + 'px';
+  fovCircle.style.height = r*2 + 'px';
+  fovCircle.style.marginLeft = (0) + 'px';
+  fovCircle.style.marginTop = (0) + 'px';
+  // animate a soft pulse via box-shadow to show change
+  fovCircle.style.boxShadow = '0 0 18px rgba(255,255,255,0.04)';
+}
+
+/* Aim Head toggle (increase "stickiness") */
+aimHeadBtn.addEventListener('click', ()=>toggleAimHead());
+function toggleAimHead(){
+  aimHeadOn = !aimHeadOn;
+  aimHeadBtn.classList.toggle('on'); aimHeadBtn.classList.toggle('off');
+  adjustCrossEffects();
+}
+
+/* Aim 360 toggle */
+aim360Btn.addEventListener('click', ()=>toggleAim360());
+function toggleAim360(){
+  aim360On = !aim360On;
+  aim360Btn.classList.toggle('on'); aim360Btn.classList.toggle('off');
+  adjustCrossEffects();
+}
+
+/* Adjust crosshair visual effects to simulate sensitivity changes */
+function adjustCrossEffects(){
+  // effect: if aimHeadOn or aim360On reduce wobble amplitude or speed to simulate easier tracking
+  if(crossElem){
+    if(aimHeadOn && aim360On){
+      crossElem.style.animationDuration = '.24s';
+      crossElem.style.transform = 'translate(-50%,-50%)';
+      crossElem.style.boxShadow = '0 0 12px rgba(0,255,200,0.12)';
+    } else if(aimHeadOn){
+      crossElem.style.animationDuration = '.22s';
+      crossElem.style.boxShadow = '0 0 10px rgba(0,255,200,0.10)';
+    } else if(aim360On){
+      crossElem.style.animationDuration = '.14s';
+      crossElem.style.boxShadow = '0 0 10px rgba(255,200,0,0.10)';
+    } else {
+      crossElem.style.animationDuration = '.18s';
+      crossElem.style.boxShadow = '0 0 8px rgba(255,0,0,0.12)';
+    }
+  }
+  if(subCrossElem){
+    if(aimHeadOn) subCrossElem.style.animationDuration = '0.45s';
+    else if(aim360On) subCrossElem.style.animationDuration = '0.9s';
+    else subCrossElem.style.animationDuration = '0.6s';
+  }
+  if(fixedCrossElem){
+    if(aimHeadOn) fixedCrossElem.style.boxShadow = '0 0 10px rgba(0,255,200,0.12)';
+    else fixedCrossElem.style.boxShadow = '0 0 6px rgba(255,0,0,0.18)';
+  }
+}
+
+/* ---------- shortcut quick-shape buttons ---------- */
+scSmall.addEventListener('click', ()=>{
+  // create small cross and activate it
+  clearCrosses();
+  subCrossElem = document.createElement('div'); subCrossElem.className='subcross';
+  subCrossElem.style.borderColor = aimColor.value;
+  document.body.appendChild(subCrossElem);
+  subCrossElem.style.animationDuration='0.6s';
+  if(fixRecoilOn) makeCrossFixedVisual(subCrossElem);
+});
+scBig.addEventListener('click', ()=>{
+  clearCrosses();
+  crossElem = document.createElement('div'); crossElem.className='crosshair';
+  crossElem.style.borderColor = aimColor.value;
+  crossElem.style.width='40px'; crossElem.style.height='40px';
+  document.body.appendChild(crossElem);
+  if(fixRecoilOn) makeCrossFixedVisual(crossElem);
+});
+scRed.addEventListener('click', ()=>{
+  aimColor.value = '#ff0000'; applyColor(aimColor.value);
+});
+scBlue.addEventListener('click', ()=>{
+  aimColor.value = '#00ccff'; applyColor(aimColor.value);
+});
+
+/* color picker apply */
+aimColor.addEventListener('input', (e)=>{
+  applyColor(e.target.value);
+});
+
+/* ---------- keyboard shortcuts (keep originals) ---------- */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === '1'){ toggleLightAim(); }
+  if(e.key === '2'){ toggleSpinAim(); }
+  if(e.key === '3'){ toggleFixedAim(); }
+  if(e.key === '4'){ toggleFixRecoil(); } // new
+  if(e.key.toLowerCase() === 'a'){ aimHeader.click(); }
+});
+
+/* ---------- temp / AC ---------- */
+windWidget.addEventListener('click', ()=>{
+  cooling = !cooling;
+  if(cooling){
+    acIcon.style.filter = 'drop-shadow(0 0 6px rgba(255,255,255,0.5))';
+    clearInterval(tempInterval);
+    tempInterval = setInterval(()=>{
+      if(temp > 22){ temp = Math.max(22, temp - 0.4); updateTemperatureText(); } else clearInterval(tempInterval);
+    }, 350);
+  } else {
+    acIcon.style.filter = 'none';
+    clearInterval(tempInterval);
+    tempInterval = setInterval(()=>{
+      if(temp < 50){ temp = Math.min(50, temp + 0.6); updateTemperatureText(); } else clearInterval(tempInterval);
+    }, 500);
+  }
+});
+function updateTemperatureText(){ temperatureEl.textContent = 'Nhiệt độ: ' + temp.toFixed(1) + '°C' }
+
+/* ---------- helper functions used in multiple places ---------- */
+function toggleLightAim(){ lightAimBtn.click(); } // already wired above via listener; keep for keyboard calls
+function toggleSpinAim(){ spinAimBtn.click(); }
+function toggleFixedAim(){ fixedAimBtn.click(); }
+
+/* Keep explicit listeners for the buttons used earlier */
+lightAimBtn.addEventListener('click', ()=>{
+  // if already was on, clearCrosses handled in toggleLightAim flow above
+  if(lightAimBtn.classList.contains('off')){
+    // was off and got clicked -> actual behavior executed by other listener above
+  }
+});
+
+/* Make sure color initially applied if any cross exists */
+applyColor(aimColor.value);
+
+/* ---------- optional: expose a function to programmatically open the panel (useful for iOS webapp) ---------- */
+window.openOverlayMenu = openMenu;
+window.closeOverlayMenu = closeMenu;
+window.toggleOverlayMenu = togglePanelVisibility;
+
+
+// Hàm xác nhận đã follow
+function confirmFollow(){
+  localStorage.setItem('followed_tiktok', '1');
+  document.getElementById('followPopup').style.display = 'none';
+  oldOpenMenu();
+}
+
+// Ghi nhớ hàm openMenu gốc
+const oldOpenMenu = openMenu;
+
+// Ghi đè hàm openMenu để kiểm tra follow
+openMenu = function(){
+  if(localStorage.getItem('followed_tiktok') === '1'){
+    oldOpenMenu();
+  } else {
+    document.getElementById('followPopup').style.display = 'flex';
+  }
+};
+
+</script>
+
+<!-- Popup yêu cầu Follow TikTok -->
+<div id="followPopup" style="position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.85);color:#fff;display:flex;flex-direction:column;align-items:center;
+justify-content:center;z-index:10020;text-align:center;padding:20px;display:none;">
+  <h2 style="max-width:300px;">📌 Vui lòng Follow TikTok trước khi sử dụng menu</h2>
+  <a href="https://www.tiktok.com/@minh.tr432" target="_blank" 
+     style="background:#ff0050;color:#fff;padding:10px 20px;border-radius:8px;
+     display:inline-block;text-decoration:none;margin-top:20px;font-weight:bold;">
+     📱 Follow TikTok
+  </a>
+  <button onclick="confirmFollow()" style="margin-top:15px;padding:8px 16px;border:none;
+  border-radius:6px;background:#00cc44;color:#fff;cursor:pointer;font-weight:bold;">
+    ✅ Tôi đã follow
+  </button>
+</div>
+
+</body>
+</html>
