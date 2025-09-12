@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menu Kéo Tâm Free Fire - Demo nhẹ</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Rubik:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+   .rainbow-text {
+    font-weight: 800;
+   background-image: linear-gradient(
+    to right,
+    red, orange, yellow, green, cyan, blue, violet, red
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 400% auto;
+  animation: rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+    :root{
+      --glass-bg: rgba(20,18,30,0.55);
+      --accent1: #ff8a65;
+      --accent2: #ffb74d;
+      --neon: #8be9fd;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Rubik", "Montserrat", sans-serif;
+      -webkit-font-smoothing:antialiased;
+      background:
+        radial-gradient(1200px 600px at 10% 20%, rgba(255,120,120,0.12), transparent 10%),
+        linear-gradient(180deg, #0f1226 0%, #0b0d12 30%, #00101a 100%);
+      color:#fff;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:28px;
+    }
+
+    .page{
+      width:100%;
+      max-width:420px;
+      margin:12px;
+      padding-bottom:60px;
+    }
+
+    header h1{
+      font-size:34px;
+      margin:8px 0 18px;
+      font-weight:800;
+      text-align:center;
+      letter-spacing:1px;
+      background: linear-gradient(90deg, #ffd7b5, #ff9a9e 30%, #9ad8ff 70%);
+      -webkit-background-clip: text;
+      background-clip:text;
+      color: transparent;
+      text-shadow: 0 8px 18px rgba(0,0,0,0.45);
+    }
+
+    /* Glass panel */
+    .glass{
+      background: var(--glass-bg);
+      border-radius:16px;
+      padding:18px;
+      margin-bottom:18px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px) saturate(120%);
+    }
+
+    .section-title{
+      font-weight:700;
+      font-size:18px;
+      color: #ffcf7a;
+      margin-bottom:10px;
+      text-shadow: 0 4px 18px rgba(138,43,226,0.12);
+    }
+
+    .checkbox-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin:6px 0;
+    }
+    .checkbox-row label{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:15px;
+      color:#f6f0f8;
+    }
+    .checkbox-row input[type=checkbox]{
+      width:20px;
+      height:20px;
+      accent-color: #f7a94a;
+    }
+
+    /* sliders */
+    .control{
+      margin:14px 0 6px;
+    }
+    .control .label{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-weight:600;
+      color:#ffd98b;
+      margin-bottom:8px;
+    }
+    input[type=range]{
+      -webkit-appearance:none;
+      width:100%;
+      height:8px;
+      border-radius:8px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      outline:none;
+    }
+    input[type=range]::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      width:22px;height:22px;border-radius:50%;
+      background:white;
+      box-shadow:0 4px 14px rgba(0,0,0,0.5);
+      border:3px solid #f6a95a;
+      cursor:pointer;
+    }
+
+    .value{
+      color:#ffb86b;
+      font-weight:700;
+      min-width:28px;
+      text-align:right;
+    }
+
+    /* big button */
+    .btn{
+      display:inline-block;
+      padding:14px 26px;
+      border-radius:14px;
+      background: linear-gradient(90deg,#ff8a65,#ffb74d);
+      color:white;
+      font-weight:800;
+      text-align:center;
+      box-shadow: 0 10px 30px rgba(255,120,80,0.18);
+      border:none;
+      cursor:pointer;
+      margin:20px auto;
+      display:block;
+      width:70%;
+      max-width:260px;
+    }
+
+    /* two small buttons */
+    .footer-actions{
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      margin-top:18px;
+    }
+    .small-btn{
+      flex:1;
+      padding:12px 8px;
+      border-radius:14px;
+      background: linear-gradient(90deg,#39e0d6,#7af6a2);
+      border:none;
+      color:#002;
+      font-weight:700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+      cursor:pointer;
+    }
+
+    /* contact cards */
+    .contacts{
+      margin-top:18px;
+      display:grid;
+      gap:14px;
+    }
+    .contact-card{
+      border-radius:12px;
+      padding:12px;
+      border:2px solid #ffea88;
+      background: linear-gradient(180deg, rgba(20,18,30,0.9), rgba(20,18,30,0.85));
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .avatar{
+      width:74px;height:74px;border-radius:50%;
+      overflow:hidden;
+      flex-shrink:0;
+      border:3px solid rgba(255,255,255,0.06);
+      background: linear-gradient(180deg,#fff,#ddd);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover}
+
+    .contact-info{
+      flex:1;
+    }
+    .contact-info h3{
+      margin:0;font-size:16px;color:#ff5f9a;
+      font-weight:800;
+    }
+    .contact-links{
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:14px;
+      color:#9fe7ff;
+    }
+    .contact-links a{
+      color:#5ee2ff;text-decoration:none;
+      font-weight:600;
+    }
+
+    /* small footer text */
+    .hint{
+      text-align:center;
+      margin-top:10px;
+      color:rgba(255,255,255,0.18);
+      font-size:13px;
+    }
+
+    /* responsive */
+    @media (max-width:420px){
+      header h1{font-size:28px}
+      .btn{width:86%}
+    }
+
+    /* 🌈 Rainbow cho toàn bộ chữ */
+    body, h1, h2, h3, h4, h5, h6, p, label, button, div, span, .value, .section-title, .contact-info, .hint, a {
+      font-weight: 700;
+      background-image: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet, red);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      background-size: 400% auto;
+      animation: rainbow 5s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Menu Kéo Tâm Free Fire</h1>
+    </header>
+
+    <!-- Device performance -->
+    <div class="glass">
+      <div class="rainbow-text">Hiệu Suất Thiết Bị</div>
+      <div class="checkbox-row">
+        <label><input type="checkbox" id="boostCpu"> Boost CPU</label>
+        <label><input type="checkbox" id="Fake aim drag"> Fake aim drag</label>
+        <label style="margin-left:auto"><input type="checkbox" id="cleanRam"> Dọn RAM khi khởi chạy</label>
+      </div>
+    </div>
+
+    <!-- Aim & sliders -->
+    <div class="glass">
+      <div class="rainbow-text">Kéo Tâm &amp; Aimbot</div>
+
+      <div class="control">
+        <div class="label">
+          <div>Tăng Tốc Game</div>
+          <div class="value" id="speedVal">0</div>
+        </div>
+        <input type="range" id="speed" min="0" max="100" value="0">
+      </div>
+
+      <div class="control">
+        <div class="label">
+          <div>Giảm giật / lag</div>
+          <div class="value" id="lagVal">0</div>
+        </div>
+        <input type="range" id="lag" min="0" max="100" value="0">
+      </div>
+    </div>
+
+    <!-- Screen sensitivity -->
+    <div class="glass">
+      <div class="rainbow-text">Độ nhạy Màn Hình (PPI)</div>
+
+      <div class="control">
+        <div class="label">
+          <div>Nhạy màn ngang</div>
+          <div class="value" id="hVal">0</div>
+        </div>
+        <input type="range" id="h" min="0" max="120 hz" value="0">
+      </div>
+
+      <div class="control">
+        <div class="label">
+          <div>Nhạy dọc</div>
+          <div class="value" id="vVal">0</div>
+        </div>
+        <input type="range" id="v" min="0" max="120" value="0">
+      </div>
+
+      <div class="control">
+        <div class="label">
+          <div>DPI</div>
+          <div class="value" id="dpiVal">0</div>
+        </div>
+        <input type="range" id="dpi" min="0" max="1200" value="0">
+      </div>
+    </div>
+
+    <button class="btn" id="applyBtn">Thiết lập Code</button>
+
+    <div class="glass" style="rainbow-text">
+      <div style="font-weight:800;margin-bottom:8px;text-shadow:0 6px 16px rgba(0,0,0,0.5)">Vào Game FF &amp; FFMAX</div>
+      <div class="footer-actions">
+        <button class="small-btn" id="btnNormal" onclick="openFF()">Free Fire Thường</button>
+        <button class="small-btn" id="btnMax" onclick="openFFMax()">Free Fire MAX</button>
+      </div>
+    </div>
+
+    <!-- Contacts -->
+    <div class="contacts">
+      <div class="contact-card">
+        <div class="avatar">
+          <img src="https://via.placeholder.com/150/FFFFFF/000000?text=Fuly" alt="Fuly">
+        </div>
+        <div class="contact-info">
+          <h3>Thông tin liên hệ Người Crack Mtri</h3>
+          <div class="contact-links">
+            <div>Facebook: <a href="https://www.facebook.com/share/1D88Q1naqX/?mibextid=wwXIfr" target="_blank">Hoàng Minh Tri</a></div>
+            <div>Zalo: <a href="tel: 0822269369">0822269369</a></div>
+            <div>Tiktok: <a href="https://www.tiktok.com/@minh.tr432?_t=ZS-8zdtwZaI4JR&_r=1" target="_blank">Tiktok Adu e ron</a></div>
+          </div>
+        </div>
+      </div>
+
+    <p class="hint">* Đây là bản demo HTML/CSS/JS — chỉnh sửa nội dung, avatar và link theo ý bạn.</p>
+  </div>
+
+  <script>
+    // Bind sliders to values
+    const map = [
+      {id:'speed', out:'speedVal'},
+      {id:'lag', out:'lagVal'},
+      {id:'h', out:'hVal'},
+      {id:'v', out:'vVal'},
+      {id:'dpi', out:'dpiVal'}
+    ];
+    map.forEach(m => {
+      const s = document.getElementById(m.id);
+      const o = document.getElementById(m.out);
+      const update = () => o.textContent = s.value;
+      s.addEventListener('input', update);
+      update();
+    });
+
+    // Toast
+    function showToast(message) {
+      let toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.className = "toast show";
+      setTimeout(() => toast.className = "toast", 3000);
+    }
+
+    // Apply button
+    document.getElementById('applyBtn').addEventListener('click', () => {
+      showToast("✅ Thiết lập Code thành công!");
+    });
+
+    // Open apps
+    function isIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent); }
+
+    function openFF(){
+      if(isIOS()){
+        window.location.href="https://apps.apple.com/app/id1300146617";
+      } else {
+        window.location.href="intent://launch/#Intent;scheme=freefire;package=com.dts.freefireth;end";
+      }
+      showToast("🔥 Đang mở Free Fire...");
+    }
+
+    function openFFMax(){
+      if(isIOS()){
+        window.location.href="https://apps.apple.com/app/id1480517680";
+      } else {
+        window.location.href="intent://launch/#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
+      }
+      showToast("🚀 Đang mở Free Fire MAX...");
+    }
+  </script>
+
+  <!-- Toast element -->
+  <div id="toast" class="toast">✅ Thành công!</div>
+
+  <style>
+  .toast {
+    visibility: hidden;
+    min-width: 220px;
+    margin-left: -110px;
+    background: #4CAF50;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 14px;
+    position: fixed;
+    z-index: 999;
+    left: 50%;
+    bottom: 30px;
+    font-size: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: opacity 0.5s, bottom 0.5s;
+  }
+  .toast.show {
+    visibility: visible;
+    opacity: 1;
+    bottom: 50px;
+  }
+  </style>
+
+  <!-- ❄️ Hiệu ứng tuyết rơi nhanh -->
+  <canvas id="snowCanvas"></canvas>
+  <script>
+    const snowCanvas = document.getElementById("snowCanvas");
+    const ctx = snowCanvas.getContext("2d");
+    let snowflakes = [];
+
+    function resizeSnow() {
+      snowCanvas.width = window.innerWidth;
+      snowCanvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeSnow);
+    resizeSnow();
+
+    function createSnow() {
+      const x = Math.random() * snowCanvas.width;
+      const y = 0;
+      const radius = Math.random() * 4 + 1;
+      const speed = Math.random() * 3 + 3; // ❄️ tốc độ rơi 3–6 px/frame
+      snowflakes.push({ x, y, radius, speed });
+    }
+
+    function drawSnow() {
+      ctx.clearRect(0, 0, snowCanvas.width, snowCanvas.height);
+      ctx.fillStyle = "white";
+      ctx.beginPath();
+      for (let flake of snowflakes) {
+        ctx.moveTo(flake.x, flake.y);
+        ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+      }
+      ctx.fill();
+      updateSnow();
+    }
+
+    function updateSnow() {
+      for (let flake of snowflakes) {
+        flake.y += flake.speed;
+        if (flake.y > snowCanvas.height) {
+          flake.y = 0;
+          flake.x = Math.random() * snowCanvas.width;
+        }
+      }
+    }
+
+    setInterval(createSnow, 150); 
+    function animateSnow() {
+      drawSnow();
+      requestAnimationFrame(animateSnow);
+    }
+    animateSnow();
+
+    snowCanvas.style.position = "fixed";
+    snowCanvas.style.top = "0";
+    snowCanvas.style.left = "0";
+    snowCanvas.style.pointerEvents = "none";
+    snowCanvas.style.zIndex = "9999";
+  </script>
+</body>
+</html>
